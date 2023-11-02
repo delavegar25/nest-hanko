@@ -2,12 +2,15 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { expressJwtSecret } from 'jwks-res';
 import { promisify } from 'util';
 import * as jwt from 'express-jwt'
-import { Observable } from 'rxjs';
+
 
 @Injectable()
 export class AuthorizaionGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-      
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+
+    const req = context.getArgByIndex[0];
+    const res = context.getArgByIndex[1];
+
     const checkJwt = promisify(
       jwt({
         secret: expressJwtSecret({
@@ -19,7 +22,13 @@ export class AuthorizaionGuard implements CanActivate {
         audience: '',
         issuer: '',
         algorithms: [ 'RS256' ]     
- })
+      })
     );
+    try{
+      await checkJwt(req, res);
+      return true;
+    }catch(error) {
+      throw new UnauthorizedException(error);
+    }
   }
 }
