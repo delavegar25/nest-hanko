@@ -5,4 +5,12 @@ export class AppService {
   getHello(): string {
     return 'Hello World!';
   }
+
+  getPrivate(): string {
+    return 'This is a protected resource. Welcome to Hanko';
+  }
+
+  getPublic(): string {
+    return 'This is a private resource. Welcome to Hanko';
+  }
 }
